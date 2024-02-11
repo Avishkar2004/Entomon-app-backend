@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 
 app.get("/insecticide", (req, res) => {
   db.query(
-    "SELECT id, name, salePrice AS price, description, image FROM insecticide",
+    "SELECT id, name,description, salePrice AS price,reviews,stockStatus, save_50, image FROM insecticide",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
