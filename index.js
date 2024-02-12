@@ -14,9 +14,9 @@ app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
-app.get("/insecticide", (req, res) => {
+app.get("/api/productData", (req, res) => {
   db.query(
-    "SELECT id, name,description, salePrice AS price,reviews,stockStatus, save_50, image FROM insecticide",
+    "SELECT product_id, name, photo, color, review, percent_off, rupees, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM frontproduct",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
@@ -28,12 +28,12 @@ app.get("/insecticide", (req, res) => {
 
       // Convert BLOB image data to base64
       const updatedResults = results.map((result) => {
-        const imageData = Buffer.from(result.image, "binary").toString(
+        const imageData = Buffer.from(result.photo, "binary").toString(
           "base64"
         );
         return {
           ...result,
-          image: `data:image/jpeg;base64,${imageData}`,
+          photo: `data:image/jpeg;base64,${imageData}`,
         };
       });
 
@@ -45,7 +45,7 @@ app.get("/insecticide", (req, res) => {
 //gettind
 app.get("/cart", (req, res) => {
   db.query(
-    "SELECT id, name, price, image FROM cart",
+    "SELECT id, name, image, rupees,address , quantity FROM cart",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
@@ -82,16 +82,23 @@ app.post("/cart/:id", (req, res) => {
       : null;
 
     const insertOrUpdateQuery = `
-      INSERT INTO cart (id, name, price, image)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO cart (product_id, name, photo, rupees, quantity)
+      VALUES (?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE
       name = VALUES(name),
-      price = VALUES(price),
-      image = VALUES(image)
-      `;
+      photo = VALUES(photo),
+      rupees = VALUES(rupees),
+      quantity = VALUES(quantity)
+    `;
     db.query(
       insertOrUpdateQuery,
-      [newItem.id, newItem.name, newItem.price, binaryImage],
+      [
+        req.params.id,
+        newItem.name,
+        binaryImage,
+        newItem.rupees,
+        newItem.quantity,
+      ],
       (err, results) => {
         if (err) {
           console.error("Error inserting or updating cart item:", err);
