@@ -42,27 +42,29 @@ app.get("/api/productData", (req, res) => {
   );
 });
 
-//gettind
-app.get("/cart", (req, res) => {
+//getting cart data
+app.get("/api/cart", (req, res) => {
   db.query(
-    "SELECT id, name, image, rupees,address , quantity FROM cart",
+    "SELECT product_id, name, photo, rupees, quantity FROM cart",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
         res
           .status(500)
-          .json({ error: "Internal server error occurred in cart" });
+          .json({
+            error:
+              "Internal server error occurred in while getting data from cart",
+          });
         return;
       }
-
       // Convert BLOB image data to base64
       const updatedResults = results.map((result) => {
-        const imageData = Buffer.from(result.image, "binary").toString(
+        const imageData = Buffer.from(result.photo, "binary").toString(
           "base64"
         );
         return {
           ...result,
-          image: `data:image/jpeg;base64,${imageData}`,
+          photo: `data:image/jpeg;base64,${imageData}`,
         };
       });
 
