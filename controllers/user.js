@@ -57,17 +57,16 @@ function getCartData(req, res) {
   );
 }
 
+function insertCartData(req, res) {
+  try {
+    const newItem = req.body;
+    console.log("Received request to add to cart:", newItem);
+    // Convert base64 image to buffer
+    const binaryImage = newItem.photo
+      ? Buffer.from(newItem.photo.split(",")[1], "base64")
+      : null;
 
-function insertCartData (req, res)  {
-    try {
-      const newItem = req.body;
-      console.log("Received request to add to cart:", newItem);
-      // Convert base64 image to buffer
-      const binaryImage = newItem.image
-        ? Buffer.from(newItem.image, "base64")
-        : null;
-  
-      const insertOrUpdateQuery = `
+    const insertOrUpdateQuery = `
         INSERT INTO cart (product_id, name, photo, rupees, quantity)
         VALUES (?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
@@ -76,33 +75,33 @@ function insertCartData (req, res)  {
         rupees = VALUES(rupees),
         quantity = VALUES(quantity)
       `;
-      db.query(
-        insertOrUpdateQuery,
-        [
-          req.params.id,
-          newItem.name,
-          binaryImage,
-          newItem.rupees,
-          newItem.quantity,
-        ],
-        (err, results) => {
-          if (err) {
-            console.error("Error inserting or updating cart item:", err);
-            return res
-              .status(500)
-              .json({ error: "Internal server error in Cart" });
-          }
-          res.json({ ...newItem });
+    db.query(
+      insertOrUpdateQuery,
+      [
+        req.params.id,
+        newItem.name,
+        binaryImage,
+        newItem.rupees,
+        newItem.quantity,
+      ],
+      (err, results) => {
+        if (err) {
+          console.error("Error inserting or updating cart item:", err);
+          return res
+            .status(500)
+            .json({ error: "Internal server error in Cart" });
         }
-      );
-    } catch (error) {
-      console.error("Unexpected error in /cart route:", error);
-      res.status(500).json({ error: "Internal server error in Cart" });
-    }
+        res.json({ ...newItem });
+      }
+    );
+  } catch (error) {
+    console.error("Unexpected error in /cart route:", error);
+    res.status(500).json({ error: "Internal server error in Cart" });
   }
+}
 
 module.exports = {
   getProductData,
   getCartData,
-  insertCartData
+  insertCartData,
 };
