@@ -2,7 +2,7 @@ const { db } = require("../config/connection");
 
 function getProductData(req, res) {
   db.query(
-    "SELECT product_id, name, photo, color, review, percent_off, rupees, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM frontproduct",
+    "SELECT product_id, name, photo, review, percent_off, rupees, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM frontproduct",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
@@ -30,7 +30,7 @@ function getProductData(req, res) {
 
 function getCartData(req, res) {
   db.query(
-    "SELECT product_id, name, photo, rupees, quantity FROM cart",
+    "SELECT product_id, name, photo, review, percent_off, rupees, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM cart",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
@@ -51,7 +51,6 @@ function getCartData(req, res) {
           photo: imageData ? `data:image/jpeg;base64,${imageData}` : null,
         };
       });
-
       res.json(updatedResults);
     }
   );
@@ -67,14 +66,22 @@ function insertCartData(req, res) {
       : null;
 
     const insertOrUpdateQuery = `
-        INSERT INTO cart (product_id, name, photo, rupees, quantity)
-        VALUES (?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE
-        name = VALUES(name),
-        photo = VALUES(photo),
-        rupees = VALUES(rupees),
-        quantity = VALUES(quantity)
-      `;
+      INSERT INTO cart (product_id, name, photo, rupees, quantity, review, percent_off, delivery_charges, delivery_time, emi_per_month, emi_month, address)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+      name = VALUES(name),
+      photo = VALUES(photo),
+      rupees = VALUES(rupees),
+      quantity = VALUES(quantity),
+      review = VALUES(review),
+      percent_off = VALUES(percent_off),
+      delivery_charges = VALUES(delivery_charges),
+      delivery_time = VALUES(delivery_time),
+      emi_per_month = VALUES(emi_per_month),
+      emi_month = VALUES(emi_month),
+      address = VALUES(address)
+    `;
+
     db.query(
       insertOrUpdateQuery,
       [
@@ -83,6 +90,13 @@ function insertCartData(req, res) {
         binaryImage,
         newItem.rupees,
         newItem.quantity,
+        newItem.review,
+        newItem.percent_off,
+        newItem.delivery_charges,
+        newItem.delivery_time,
+        newItem.emi_per_month,
+        newItem.emi_month,
+        newItem.address,
       ],
       (err, results) => {
         if (err) {
@@ -95,7 +109,7 @@ function insertCartData(req, res) {
       }
     );
   } catch (error) {
-    console.error("Unexpected error in /cart route:", error);
+    console.error("Unexpected error in insertCartData:", error);
     res.status(500).json({ error: "Internal server error in Cart" });
   }
 }
