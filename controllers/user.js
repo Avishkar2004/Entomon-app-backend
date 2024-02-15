@@ -30,7 +30,7 @@ function getProductData(req, res) {
 
 function getCartData(req, res) {
   db.query(
-    "SELECT product_id, name, photo, review, percent_off, rupees, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM cart",
+    "SELECT product_id, name, photo, review, percent_off, rupees, quantity, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM cart",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
