@@ -58,6 +58,7 @@ function getCartData(req, res) {
 
 function insertCartData(req, res) {
   try {
+    console.log(req.body);
     const newItem = req.body;
     console.log("Received request to add to cart:", newItem);
     // Convert base64 image to buffer
@@ -114,8 +115,28 @@ function insertCartData(req, res) {
   }
 }
 
+function deleteFromCart(req, res) {
+  try {
+    const productId = req.params.id;
+    const deleteQuery = "DELETE FROM cart WHERE product_id = ?";
+    db.query(deleteQuery, [productId], (err, results) => {
+      if (err) {
+        console.error("Error deleting cart item: ", err);
+        return res.status(500).json({
+          error: "Internal server error in cart while deleting item from Cart",
+        });
+      }
+      res.json({ message: "Cart item deleted successfully" });
+    });
+  } catch (error) {
+    console.error("Unexpected error in deleteCart Item: ", error);
+    res.status(500).json({ error: "Internal server error in Cart" });
+  }
+}
+
 module.exports = {
   getProductData,
   getCartData,
   insertCartData,
+  deleteFromCart,
 };
