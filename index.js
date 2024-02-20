@@ -8,6 +8,7 @@ const {
   getCartData,
   insertCartData,
   deleteFromCart,
+  UpdateAddressFromCart,
 } = require("./controllers/user");
 
 app.use(cors());
@@ -21,14 +22,17 @@ app.get("/", (req, res) => {
 
 app.get("/api/productData", getProductData);
 
-//getting cart data
+//! Getting cart data
 app.get("/api/cart", getCartData);
 
-// For inserting data
+//! For inserting data
 app.post("/cart/:id", insertCartData);
 
-// From deleting cart
+//! From deleting cart
 app.delete("/cart/:id", deleteFromCart);
+
+//! For Update add in cart table
+app.put("/cart/:id", UpdateAddressFromCart);
 
 app.listen(PORT, () => {
   console.log("Server is running on 8000");
