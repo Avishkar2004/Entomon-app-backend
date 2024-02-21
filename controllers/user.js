@@ -141,7 +141,7 @@ function UpdateAddressFromCart(req, res) {
     const fullAddress = `${address.pincode}, ${address.locality}, ${address.city}, ${address.state}, ${address.landmark}, ${address.addressType}`;
     const updateQuery =
       "UPDATE frontproduct SET address = ? WHERE product_id = ?";
-console.log(req.params)
+    // "UPDATE frontproduct SET address = ?";
     console.log(fullAddress); // Check if the fullAddress is correct
     console.log("Received productId:", productId);
 

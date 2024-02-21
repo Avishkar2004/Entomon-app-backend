@@ -4,7 +4,7 @@ const db = mysql2.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "agriapp",
+  database: "ento-app",
 });
 db.connect((err) => {
   if (err) {
