@@ -3,6 +3,9 @@ const app = express();
 const PORT = 8000;
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const status = require("express-status-monitor");
+const compression = require("compression");
+
 const {
   getProductData,
   getCartData,
@@ -13,13 +16,20 @@ const {
 
 app.use(cors());
 app.use(bodyParser.json());
+//! to check our server status
+app.use(status());
+//! Compress all HTTP responses
+app.use(compression());
 
-//this is a middleware or plugin
+//! This is a middleware/plugin
 app.use(express.urlencoded({ extended: false }));
+
+//! Router's
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
+//! Getting data(on Home Page)
 app.get("/api/productData", getProductData);
 
 //! Getting cart data
@@ -34,6 +44,7 @@ app.delete("/cart/:id", deleteFromCart);
 //! For Update add in cart table
 app.put("/cart/:id", UpdateAddressFromCart);
 
+//! Server is
 app.listen(PORT, () => {
   console.log("Server is running on 8000");
 });

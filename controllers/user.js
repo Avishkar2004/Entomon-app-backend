@@ -133,9 +133,10 @@ function deleteFromCart(req, res) {
     res.status(500).json({ error: "Internal server error in Cart" });
   }
 }
+
 function UpdateAddressFromCart(req, res) {
   try {
-    const { productId, name } = req.params; // Extract productId from request params
+    const { productId } = req.params; // Extract productId from request params
     const { address } = req.body; // Extract address object from request body
 
     const fullAddress = `${address.pincode}, ${address.locality}, ${address.city}, ${address.state}, ${address.landmark}, ${address.addressType}`;
@@ -143,9 +144,9 @@ function UpdateAddressFromCart(req, res) {
       "UPDATE frontproduct SET address = ? WHERE product_id = ?";
     // "UPDATE frontproduct SET address = ?";
     console.log(fullAddress); // Check if the fullAddress is correct
-    console.log("Received productId:", productId.name);
+    console.log(res.name);
 
-    db.query(updateQuery, [fullAddress, productId, name], (err, results) => {
+    db.query(updateQuery, [fullAddress, productId], (err, results) => {
       if (err) {
         console.error("Error updating address in cart item: ", err);
         return res.status(500).json({
