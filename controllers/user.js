@@ -2,7 +2,7 @@ const { db } = require("../config/connection");
 
 function getProductData(req, res) {
   db.query(
-    "SELECT product_id, name, photo, review, percent_off, rupees, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM frontproduct",
+    "SELECT product_id, name, photo, review, percent_off, rupees, stockStatus, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM frontproduct",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
@@ -30,7 +30,7 @@ function getProductData(req, res) {
 
 function getCartData(req, res) {
   db.query(
-    "SELECT product_id, name, photo, review, percent_off, rupees, quantity, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM cart",
+    "SELECT product_id, name, photo, review, percent_off, rupees,stockStatus, quantity, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM cart",
     (error, results, fields) => {
       if (error) {
         console.error("Error querying MySQL: " + error);
@@ -66,13 +66,14 @@ function insertCartData(req, res) {
       ? Buffer.from(newItem.photo.split(",")[1], "base64")
       : null;
 
-    const insertOrUpdateQuery = `
-      INSERT INTO cart (product_id, name, photo, rupees, quantity, review, percent_off, delivery_charges, delivery_time, emi_per_month, emi_month, address)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      const insertOrUpdateQuery = `
+      INSERT INTO cart (product_id, name, photo, rupees, stockStatus, quantity, review, percent_off, delivery_charges, delivery_time, emi_per_month, emi_month, address)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE
       name = VALUES(name),
       photo = VALUES(photo),
       rupees = VALUES(rupees),
+      stockStatus = VALUES(stockStatus),
       quantity = VALUES(quantity),
       review = VALUES(review),
       percent_off = VALUES(percent_off),
@@ -82,6 +83,7 @@ function insertCartData(req, res) {
       emi_month = VALUES(emi_month),
       address = VALUES(address)
     `;
+    
 
     db.query(
       insertOrUpdateQuery,
@@ -90,6 +92,7 @@ function insertCartData(req, res) {
         newItem.name,
         binaryImage,
         newItem.rupees,
+        newItem.stockStatus,
         newItem.quantity,
         newItem.review,
         newItem.percent_off,
