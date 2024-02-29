@@ -14,7 +14,9 @@ const {
   UpdateAddressFromCart,
 } = require("./controllers/user");
 
+//! middleware is used to handle req, res cycle
 app.use(cors());
+
 app.use(bodyParser.json());
 //! to check our server status
 app.use(status());
@@ -44,7 +46,7 @@ app.delete("/cart/:id", deleteFromCart);
 //! For Update add in cart table
 app.put("/cart/:id", UpdateAddressFromCart);
 
-//! Server is
+//! Server is Up
 app.listen(PORT, () => {
   console.log("Server is running on 8000");
 });
