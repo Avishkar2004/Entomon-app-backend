@@ -40,12 +40,10 @@ function getCartData(req, res) {
       if (error) {
         // Handle error if query fails
         console.error("Error querying MySQL: " + error);
-        res
-          .status(500)
-          .json({
-            error:
-              "Internal server error occurred in while getting data from cart",
-          });
+        res.status(500).json({
+          error:
+            "Internal server error occurred in while getting data from cart",
+        });
         return;
       }
 
@@ -141,12 +139,9 @@ function deleteFromCart(req, res) {
       if (err) {
         // Handle error if query execution fails
         console.error("Error deleting cart item: ", err);
-        return res
-          .status(500)
-          .json({
-            error:
-              "Internal server error in cart while deleting item from Cart",
-          });
+        return res.status(500).json({
+          error: "Internal server error in cart while deleting item from Cart",
+        });
       }
       // Send success message as JSON response
       res.json({ message: "Cart item deleted successfully" });
@@ -172,11 +167,9 @@ function UpdateAddressFromCart(req, res) {
       if (err) {
         // Handle error if query execution fails
         console.error("Error updating address in cart item: ", err);
-        return res
-          .status(500)
-          .json({
-            error: "Internal server error while updating address in cart item",
-          });
+        return res.status(500).json({
+          error: "Internal server error while updating address in cart item",
+        });
       }
       // Send success message as JSON response
       res.json({ message: "Address updated successfully in cart item" });
