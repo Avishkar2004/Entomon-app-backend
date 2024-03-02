@@ -5,7 +5,7 @@ function getProductData(req, res) {
   // Query to select product data from the 'frontproduct' table
   db.query(
     "SELECT product_id, name, photo, review, percent_off, rupees, stockStatus, delivery_charges, emi_per_month, emi_month, address, delivery_time FROM frontproduct",
-    (error, results, fields) => {
+    async (error, results, fields) => {
       if (error) {
         // Handle error if query fails
         console.error("Error querying MySQL: " + error);
@@ -15,20 +15,49 @@ function getProductData(req, res) {
         return;
       }
 
-      // Convert BLOB image data to base64 and send the updated results as JSON response
-      const updatedResults = results.map((result) => {
-        const imageData = Buffer.from(result.photo, "binary").toString(
-          "base64"
-        );
-        return {
-          ...result,
-          photo: `data:image/jpeg;base64,${imageData}`,
-        };
-      });
+      try {
+        // Fetch cart data from the database
+        const cartData = await fetchCartData();
 
-      res.json(updatedResults);
+        // Convert BLOB image data to base64 and send the updated results as JSON response
+        const updatedResults = results.map((result) => {
+          const imageData = Buffer.from(result.photo, "binary").toString(
+            "base64"
+          );
+          // Check if the product is in the cart
+          const isInCart = cartData.some(
+            (item) => item.product_id === result.product_id
+          );
+          return {
+            ...result,
+            photo: `data:image/jpeg;base64,${imageData}`,
+            inCart: isInCart,
+          };
+        });
+
+        res.json(updatedResults);
+      } catch (fetchError) {
+        console.error("Error fetching cart data:", fetchError);
+        res.status(500).json({
+          error: "Internal server error occurred while fetching cart data",
+        });
+      }
     }
   );
+}
+
+// Function to fetch cart data from the database
+async function fetchCartData() {
+  return new Promise((resolve, reject) => {
+    // Query to select cart data from the 'cart' table
+    db.query("SELECT product_id FROM cart", (error, results, fields) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(results);
+    });
+  });
 }
 
 // Function to get cart data from the database
