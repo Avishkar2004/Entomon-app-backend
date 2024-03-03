@@ -191,6 +191,7 @@ function UpdateAddressFromCart(req, res) {
     const updateQuery =
       "UPDATE frontproduct SET address = ? WHERE product_id = ?";
     console.log(req.params);
+    console.log(address);
     // Execute the update query with the provided productId and address
     db.query(updateQuery, [fullAddress, productId], (err, results) => {
       if (err) {
