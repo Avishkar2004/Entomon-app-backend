@@ -59,5 +59,4 @@ const startServer = () => {
     console.log(`Server is running on ${PORT}`);
   });
 };
-
 startCluster(startServer);
