@@ -21,7 +21,7 @@ const startServer = () => {
   app.use(cors());
 
   app.use(bodyParser.json());
-  //! to check our server status
+  //! to check our server status "localhost:8000/status"
   app.use(status());
   //! Compress all HTTP responses
   app.use(compression());
@@ -59,4 +59,5 @@ const startServer = () => {
     console.log(`Server is running on ${PORT}`);
   });
 };
+
 startCluster(startServer);

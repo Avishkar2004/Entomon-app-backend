@@ -8,20 +8,20 @@ const startCluster = (startFunction) => {
   if (cluster.isMaster) {
     // If it's the master process, log its PID (process identifier)
     console.log(`Master process ${process.pid} is running`);
-    
+
     // Get the number of CPUs available on the current system
     const numsCPUs = os.cpus().length;
-    
+
     // Fork a new process for each CPU
     for (let i = 0; i < numsCPUs; i++) {
       cluster.fork(); // Create a new worker process
     }
-    
+
     // Event listener for when a worker process exits
     cluster.on("exit", (worker, code, signal) => {
       // Log information about the exited worker process
       console.log(`Worker process ${worker.process.pid} died. Restarting...`);
-      
+
       // Fork a new process to replace the exited one
       cluster.fork();
     });
