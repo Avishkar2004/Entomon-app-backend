@@ -20,7 +20,9 @@ const startCluster = (startFunction) => {
     // Event listener for when a worker process exits
     cluster.on("exit", (worker, code, signal) => {
       // Log information about the exited worker process
-      console.log(`Worker process ${worker.process.pid} died. Restarting...`);
+      console.log(
+        `Worker process ${worker.process.pid} died. Restarting...Starting ${worker.process.pid}`
+      );
 
       // Fork a new process to replace the exited one
       cluster.fork();

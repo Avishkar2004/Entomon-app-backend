@@ -14,6 +14,7 @@ const {
   UpdateAddressFromCart,
 } = require("./controllers/user");
 
+//! Server is running on this PORT
 const PORT = 8000;
 
 const startServer = () => {
@@ -28,6 +29,12 @@ const startServer = () => {
 
   //! This is a middleware/plugin
   app.use(express.urlencoded({ extended: false }));
+
+  //! Log which worker is handling the request
+  app.use((req, res, next) => {
+    console.log(`Request handled by worker ${process.pid}`);
+    next();
+  });
 
   //! Router's
   app.get("/", (req, res) => {
@@ -55,8 +62,25 @@ const startServer = () => {
   app.put("/cart/:id", UpdateAddressFromCart);
 
   //! Server is Up
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`);
+  });
+
+  process.on("SIGTERM", () => {
+    console.log(`Worker ${process.pid} exiting...`);
+    server.close(() => {
+      process.exit(0);
+    });
+  });
+
+  process.on("uncaughtException", (err) => {
+    console.error(
+      `Unhandled Exception in worker ${process.pid}: ${err.message}`
+    );
+  });
+
+  process.on("unhandledRejection", (reason, promise) => {
+    console.error(`Unhandled Rejection in worker ${process.pid}: ${reason}`);
   });
 };
 
