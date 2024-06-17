@@ -14,7 +14,6 @@ function getProductData(req, res) {
           .json({ error: "Internal server error occurred in insecticide" });
         return;
       }
-
       try {
         // Fetch cart data from the database
         const cartData = await fetchCartData();
